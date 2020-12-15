@@ -1,0 +1,48 @@
+<html lang="cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="浙经院健康信息自动填报">
+    <meta name="author" content="MyFlavor">
+    <title>浙经院健康信息自动填报</title>
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon"/>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/floating-labels.css" rel="stylesheet">
+</head>
+<body>
+<form class="form-signin">
+    <div class="text-center mb-4">
+
+        <h1 class="h3 mb-3 font-weight-normal">浙经院健康信息自动填报</h1></div>
+
+    <div class="form-label-group">
+        <input type="text" id="openid" class="form-control" placeholder="微信OpenID" required="" autofocus="">
+        <label for="openid">微信OpenID</label>
+    </div>
+
+    <div class="form-label-group">
+        <input type="email" id="mail" class="form-control" placeholder="邮箱" required="">
+        <label for="mail">邮箱</label>
+    </div>
+
+    <div class="form-label-group">
+        <input type="text" id="cdk" class="form-control" placeholder="卡密" required="">
+        <label for="cdk">卡密</label>
+    </div>
+
+    <div class="form-label-group">
+        <button class="btn btn-lg btn-primary btn-block login" type="submit">提交</button>
+    </div>
+    <div class="form-label-group nodetxt" style="text-align:center;">
+        <div style="text-align:left;">
+            提示: 请在填报时间提交,其余时间提交可能会提示微信OpenID校验不通过。提交后会每天自动填报，并通过邮箱通知填报结果。
+        </div>
+    </div>
+
+    <p class="mt-5 mb-3 text-muted text-center">© 2020-2021</p>
+</form>
+<script src="js/jquery-1.8.2.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+
+</html>

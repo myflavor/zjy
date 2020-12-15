@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>手动</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <!-- 所有的 css & js 资源 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../../static/sa.css">
+    <script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/element-ui@2.13.0/lib/index.js"></script>
+    <script src="https://unpkg.com/jquery@3.4.1/dist/jquery.min.js"></script>
+    <script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
+    <script src="../../static/sa.js"></script>
+</head>
+<body>
+<div class="vue-box" style="display: none;" :style="'display: block;'">
+    <!-- 参数栏 -->
+    <div class="c-panel">
+        <div class="c-title">手动填报</div>
+        <el-form v-if="m">
+            <div class="c-item br">
+                <label class="c-label">公告：</label>
+                <el-input placeholder="留空则不发送公告" size="mini" v-model="m.notice"></el-input>
+            </div>
+            <div class="c-item br">
+                <label class="c-label"></label>
+                <el-button size="mini" type="primary" icon="el-icon-plus" size="mini" @click="ok">确定</el-button>
+            </div>
+        </el-form>
+    </div>
+</div>
+<script type="text/javascript">
+    new Vue({
+        el: '.vue-box',
+        data: {
+            m: {	// 查询参数
+                notice: '',
+            }
+        },
+        methods: {
+            // ok
+            ok: function () {
+                mdata = this.m;
+                $.ajax({
+                    type: 'POST',
+                    url: "/admin/docheck" + "?" + Date.parse(new Date()),
+                    data: mdata,
+                    success: function (result) {
+                        sa.alert("结果: " + result);
+                    }, error: function (xhr, ajaxOptions, thrownError) {
+                        if (xhr.status == 403) {
+                            parent.location.href = "/admin/login.html";
+                        }
+                    }
+                });
+            }
+        }
+    })
+</script>
+</body>
+</html>

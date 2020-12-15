@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SA-控制台</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <!-- 所有的 css & js 资源 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../../static/sa.css">
+    <link rel="stylesheet" href="./console-main.css">
+</head>
+<body>
+<div class="vue-box" style="display: none;" :style="'display: block;'">
+
+    <!-- 第一栏 -->
+    <div class="s-row s-row-1">
+        <el-row :gutter="14">
+            <el-col :lg="4" :sm="8" :xs="24">
+                <div class="sa-wnk">
+                    <img src="../../static/icon/icon-user.png">
+                    <div class="sa-wnk-tv">
+                        <p class="sa-wnk-title">用户</p>
+                        <p class="sa-wnk-value">{{sta.userCount}}</p>
+                    </div>
+                </div>
+            </el-col>
+            <el-col :lg="4" :sm="8" :xs="24">
+                <div class="sa-wnk">
+                    <img src="../../static/icon/icon-goods.png">
+                    <div class="sa-wnk-tv">
+                        <p class="sa-wnk-title">卡密</p>
+                        <p class="sa-wnk-value">{{sta.goodsCount}}</p>
+                    </div>
+                </div>
+            </el-col>
+        </el-row>
+    </div>
+
+</div>
+<script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+<script src="https://unpkg.com/element-ui@2.13.0/lib/index.js"></script>
+<script src="https://unpkg.com/jquery@3.4.1/dist/jquery.js"></script>
+<script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
+<script src="https://unpkg.com/echarts@4.6.0/dist/echarts-en.min.js"></script>
+<script src="../../static/sa.js"></script>
+<script src="console-main.js"></script>
+<div style="height: 0px; overflow: hidden;">
+</div>
+</body>
+</html>

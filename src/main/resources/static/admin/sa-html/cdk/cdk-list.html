@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户列表</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <!-- 所有的 css & js 资源 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.13.0/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../../static/sa.css">
+    <script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/element-ui@2.13.0/lib/index.js"></script>
+    <script src="https://unpkg.com/jquery@3.4.1/dist/jquery.min.js"></script>
+    <script src="https://www.layuicdn.com/layer-v3.1.1/layer.js"></script>
+    <script src="../../static/sa.js"></script>
+</head>
+<body>
+<div class="vue-box" style="display: none;" :style="'display: block;'">
+    <div class="c-panel">
+        <!-- ------------- 检索参数 ------------- -->
+        <div class="c-title">卡密列表</div>
+        <!-- <div class="c-title">数据列表</div> -->
+        <!-- ------------- 快捷按钮 ------------- -->
+        <div class="fast-btn">
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="add()">新增</el-button>
+            <!-- <el-button size="mini" type="success" icon="el-icon-edit" @click="update($refs['data-table'].selection[0])"
+                :disabled="!$refs['data-table'] || $refs['data-table'].selection.length != 1">修改</el-button> -->
+            <el-button size="mini" type="danger" icon="el-icon-delete" @click="deleteByIds()"
+                       :disabled="!$refs['data-table'] || $refs['data-table'].selection.length < 1">删除
+            </el-button>
+            <el-button size="mini" type="warning" icon="el-icon-download" @click="sa.exportExcel()">导出</el-button>
+            <el-button size="mini" type="info" icon="el-icon-refresh" @click="sa.f5()">重置</el-button>
+        </div>
+        <!-- ------------- 数据列表 ------------- -->
+        <el-table class="data-table" ref="data-table" :data="dataList" size="small">
+            <el-table-column type="selection" width="45px"></el-table-column>
+            <el-table-column label="编号" prop="id" width="80px"></el-table-column>
+            <el-table-column label="卡密" prop="cdkey" width="220px"></el-table-column>
+            <el-table-column label="有效期" prop="month" width="80px"></el-table-column>
+
+            <el-table-column prop="address" label="操作">
+                <template slot-scope="s">
+                    <el-button class="c-btn" type="success" icon="el-icon-view" @click="get(s.row)">详情</el-button>
+                    <el-button class="c-btn" type="danger" icon="el-icon-delete" @click="del(s.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <!-- ------------- 分页 ------------- -->
+        <div class="page-box">
+            <el-pagination background
+                           layout="total, prev, pager, next, sizes, jumper"
+                           :current-page.sync="p.pageNo"
+                           :page-size.sync="p.pageSize"
+                           :total="dataCount"
+                           :page-sizes="[1, 10, 20, 30, 40, 50, 100]"
+                           @current-change="f5(true)"
+                           @size-change="f5(true)">
+            </el-pagination>
+        </div>
+    </div>
+    <!-- 给layer打一波广告 -->
+    <!-- <div class="c-panel" style="background-color: rgba(0,0,0,0);">
+        layer：<el-link type="primary" href="http://layer.layui.com/" target="_blank">
+            一个可以让你想到即可做到的JavaScript弹窗（层）解决方案
+        </el-link>
+    </div> -->
+</div>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '.vue-box',
+        data: {
+            p: {	// 查询参数
+                pageNo: 1,
+                pageSize: 10,
+            },
+            dataCount: 1422,
+            dataList: []
+        },
+        methods: {
+            // 数据刷新
+            f5: function () {
+                let usertable = this;
+                $.ajax({
+                    type: 'GET',
+                    url: "/admin/cdks/" + usertable.p.pageSize + "/" + usertable.p.pageNo + "?" + Date.parse(new Date()),
+                    success: function (result) {
+                        usertable.dataList = result.data;
+                        usertable.dataCount = parseInt(result.count);
+                        sa.f5TableHeight();
+                    }, error: function (xhr, ajaxOptions, thrownError) {
+                        if (xhr.status == 403) {
+                            parent.location.href = "/admin/login.html";
+                        }
+                    }
+                });
+            },
+            // 新增
+            add: function (data) {
+                // sa.showIframe('新增数据', 'user-add.html?id=-1', '420px', '280px');
+                this.sa_admin.showMenuById('2-2');
+            },
+            // 删除
+            del: function (data) {
+                let userlist = this;
+                sa.confirm('是否删除，此操作不可撤销', function () {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: "/admin/cdk/index/" + data.id + "?" + Date.parse(new Date()),
+                        success: function (result) {
+                            sa.arrayDelete(userlist.dataList, data);
+                            sa.ok('删除成功');
+                            setTimeout(function () {
+                                sa.f5();
+                            }, 500);
+                            // sa.f5TableHeight();		// 刷新表格高度
+                        }, error: function (xhr, ajaxOptions, thrownError) {
+                            if (xhr.status == 403) {
+                                parent.location.href = "/admin/login.html";
+                            }
+                        }
+                    });
+                }.bind(this));
+            },
+            // 批量删除
+            deleteByIds: function () {
+                // 获取选中元素的id列表
+                let selection = this.$refs['data-table'].selection;
+                let ids = sa.getArrayField(selection, 'id');
+                let userlist = this;
+                // 提交删除
+                sa.confirm('是否批量删除选中数据？此操作不可撤销', function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: "/admin/cdksdel?" + Date.parse(new Date()),
+                        data: {idstr: ids.join(',')},
+                        success: function (result) {
+                            sa.arrayDelete(userlist.dataList, selection);
+                            sa.ok(result + '张卡密删除成功');
+                            // sa.f5TableHeight();		// 刷新表格高度
+                            setTimeout(function () {
+                                sa.f5();
+                            }, 500);
+                        }, error: function (xhr, ajaxOptions, thrownError) {
+                            if (xhr.status == 403) {
+                                parent.location.href = "/admin/login.html";
+                            }
+                        }
+                    });
+
+                }.bind(this));
+            },
+            // 查看
+            get: function (data) {
+                var str = '<div>';
+                str += '<p>编号：' + data.id + '</p>';
+                str += '<p>卡密：' + data.cdkey + '</p>';
+                str += '<p>有效期：' + data.month + '个月</p>';
+                str += '</div>';
+                sa.alert(str);
+            }
+        },
+        created: function () {
+            this.f5()
+            sa.onInputEnter();		// 监听输入框的回车事件，执行查询
+        }
+    })
+
+</script>
+</body>
+</html>
