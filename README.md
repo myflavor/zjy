@@ -2,10 +2,6 @@
 
 ## **Idea Spring Boot项目**
 
-**dev分支，添加管理后台**
-
-**如不需管理后台，切换stable分支**
-
 ### **配置文件**
 
 /src/main/resources/application.properties
